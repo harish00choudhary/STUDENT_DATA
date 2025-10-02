@@ -4,9 +4,7 @@ _pycache_/
 *.pyo
 *.pyd
 .Python
-env/
 .dist/
-.harish/
 venv/
 .venv/
 pip-log.txt
@@ -35,6 +33,7 @@ instance/
 *.swo
 *~
 
+
 # OS
 .DS_Store
 .DS_Store?
@@ -46,6 +45,9 @@ Thumbs.db
 
 # Project specific
 .hintrc
+
+.harish
+
 
 # Google Sheets credentials
 credentials.json
