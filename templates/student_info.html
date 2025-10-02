@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ student['Name'] }} ({{student['Enrollment Number']}})</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: #333;
+        }
+
+        .profile-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .profile-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .meta-item i {
+            color: #667eea;
+        }
+
+        .back-button {
+            background: #667eea;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .back-button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title i {
+            font-size: 1.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .info-value {
+            color: #1a1a1a;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .cgpa-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .attendance-badge {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .links-card {
+            grid-column: 1 / -1;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .link-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .link-section:hover {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+        }
+
+        .link-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .link-section-title i {
+            color: #667eea;
+        }
+
+        .link-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            background: white;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-button:last-child {
+            margin-bottom: 0;
+        }
+
+        .link-button::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            z-index: 0;
+        }
+
+        .link-button:hover::before {
+            width: 100%;
+        }
+
+        .link-button:hover {
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .link-button span {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .link-button i {
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .link-button:hover i {
+            transform: translateX(5px);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-name {
+                font-size: 2rem;
+            }
+
+            .profile-meta {
+                justify-content: center;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-wrapper">
+        <!-- Header Section -->
+        <div class="profile-header">
+            <div class="profile-avatar">{{ student['Name'][:2].upper() }}</div>
+            <div class="profile-info">
+                <h1 class="profile-name">{{ student['Name'] }}</h1>
+                <div class="profile-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-id-card"></i>
+                        <span>{{ student['Enrollment Number'] }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>{{ student['Email'] }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-birthday-cake"></i>
+                        <span>{{ student['D.O.B'] }}</span>
+                    </div>
+                </div>
+            </div>
+            <a href="{{ url_for('index') }}" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Back to Search
+            </a>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Personal Information -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-user"></i>
+                    Personal Information
+                </h2>
+                <div class="info-row">
+                    <span class="info-label">Gender</span>
+                    <span class="info-value">{{ student['Gender'] }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Address</span>
+                    <span class="info-value">{{ student['Address'] }}</span>
+                </div>
+            </div>
+
+            <!-- Academic Information -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-graduation-cap"></i>
+                    Academic Details
+                </h2>
+                <div class="info-row">
+                    <span class="info-label">Course</span>
+                    <span class="info-value">{{ student['Course'] }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Department</span>
+                    <span class="info-value">{{ student['Department'] }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Batch</span>
+                    <span class="info-value">{{ student['Batch'] }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Section</span>
+                    <span class="info-value">{{ student['Section'] }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Roll Number</span>
+                    <span class="info-value">{{ student['Roll Number'] }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Year</span>
+                    <span class="info-value">{{ student['Year'] }}</span>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-chart-line"></i>
+                    Performance
+                </h2>
+                <div class="info-row">
+                    <span class="info-label">CGPA</span>
+                    <span class="info-value"><span class="cgpa-badge">{{ student['CGPA'] }}</span></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Attendance</span>
+                    <span class="info-value"><span class="attendance-badge">{{ student['Attendance'] }}%</span></span>
+                </div>
+            </div>
+
+            <!-- Admission Information -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-door-open"></i>
+                    Admission Details
+                </h2>
+                <div class="info-row">
+                    <span class="info-label">Admission Year</span>
+                    <span class="info-value">{{ student['Admission Year'] }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Category</span>
+                    <span class="info-value">{{ student['Admission Category'] }}</span>
+                </div>
+            </div>
+
+            <!-- Links Section -->
+            <div class="card links-card">
+                <h2 class="card-title">
+                    <i class="fas fa-link"></i>
+                    Quick Access
+                </h2>
+                <div class="links-grid">
+                    <!-- Timetable Section -->
+                    <div class="link-section">
+                        <h3 class="link-section-title">
+                            <i class="fas fa-calendar-days"></i>
+                            Timetable
+                        </h3>
+                        <a href="{% if student['Section'] == '7B1' %}https://drive.google.com/file/d/1cMq-8bOe-CMvMueXfEhuebOiVM0Xti-4/view?usp=sharing{% elif student['Section'] == '7B2' %}https://drive.google.com/file/d/1DQF9MIAHMmf0xrvuyarnz_rh1YMI2t-W/view?usp=sharing{% else %}https://drive.google.com/placeholder-default{% endif %}" target="_blank" class="link-button">
+                            <span>
+                                <i class="fas fa-calendar-alt"></i>
+                                View {{ student['Section'] }} Timetable
+                            </span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="{% if student['Section'] == '7B1' %}https://drive.google.com/file/d/1xDPJoy6IbXZwXC6Io8x3BbvaYkVi4fcL/view?usp=sharing{% elif student['Section'] == '7B2' %}https://drive.google.com/file/d/1DQF9MIAHMmf0xrvuyarnz_rh1YMI2t-W/view?usp=sharing{% else %}https://drive.google.com/placeholder-default{% endif %}" target="_blank" class="link-button">
+                            <span>
+                                <i class="fas fa-calendar-check"></i>
+                                Academic Calendar
+                            </span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <!-- Exam Timetable Section -->
+                    <div class="link-section">
+                        <h3 class="link-section-title">
+                            <i class="fas fa-file-pen"></i>
+                            Exam Timetable
+                        </h3>
+                        <a href="https://drive.google.com/file/d/1lEyUeHKH0VDIb9nVxT8nB0vnNidUxpYj/view" target="_blank" class="link-button">
+                            <span>
+                                <i class="fas fa-book-open"></i>
+                                Theory Exam Schedule
+                            </span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="https://drive.google.com/file/d/1AYlNuGbdAp8SfE5Ja34qnlW_f8ic5kzm/view" target="_blank" class="link-button">
+                            <span>
+                                <i class="fas fa-flask"></i>
+                                Practical Exam Schedule
+                            </span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
