@@ -1,63 +1,9 @@
-# Python
-_pycache_/
-*.pyc
-*.pyo
-*.pyd
-.Python
-.dist/
-venv/
-.venv/
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
-.git
-.mypy_cache
-.pytest_cache
-.hypothesis
-
-# Flask
-instance/
-.webassets-cache
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-
-# OS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Project specific
-.hintrc
-
-.harish
-
-
-# Google Sheets credentials
-credentials.json
+# Ignore environment and sensitive files
 .env
-    
-# Ignore credentials file
+.harish
 credentials.json
 # Ignore Python virtual environments
 .venv/
 venv/
+.harish/
 ENV/
-.env
-
