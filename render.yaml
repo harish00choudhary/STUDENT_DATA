@@ -13,4 +13,5 @@ services:
       - key: FLASK_ENV
         value: production
       - key: SECRET_KEY
-        value: your-secret-key-here
+        value: f3c1a2b4d5e67890123456789abcdef0123456789abcdef0123456789abcdef
+
